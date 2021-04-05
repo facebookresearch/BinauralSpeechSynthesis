@@ -44,7 +44,7 @@ class L2Loss(Loss):
         return th.mean((data - target).pow(2))
 
 
-class PhaseLoss(Loss):
+class AmplitudeLoss(Loss):
     def __init__(self, sample_rate, mask_beginning=0):
         '''
         :param sample_rate: (int) sample rate of the audio signal
@@ -62,12 +62,37 @@ class PhaseLoss(Loss):
         :param target: target wave signals in a B x channels x T tensor
         :return: a scalar loss value
         '''
+        data, target = self._transform(data), self._transform(target)
+        data = th.sum(data**2, dim=-1) ** 0.5
+        target = th.sum(target**2, dim=-1) ** 0.5
+        return th.mean(th.abs(data - target))
+
+
+class PhaseLoss(Loss):
+    def __init__(self, sample_rate, mask_beginning=0, ignore_below=0.1):
+        '''
+        :param sample_rate: (int) sample rate of the audio signal
+        :param mask_beginning: (int) number of samples to mask at the beginning of the signal
+        '''
+        super().__init__(mask_beginning)
+        self.ignore_below = ignore_below
+        self.fft = FourierTransform(sample_rate=sample_rate)
+
+    def _transform(self, data):
+        return self.fft.stft(data.view(-1, data.shape[-1]))
+
+    def _loss(self, data, target):
+        '''
+        :param data: predicted wave signals in a B x channels x T tensor
+        :param target: target wave signals in a B x channels x T tensor
+        :return: a scalar loss value
+        '''
         data, target = self._transform(data).view(-1, 2), self._transform(target).view(-1, 2)
         # ignore low energy components for numerical stability
         target_energy = th.sum(th.abs(target), dim=-1)
         pred_energy = th.sum(th.abs(data.detach()), dim=-1)
-        target_mask = target_energy > 0.1 * th.mean(target_energy)
-        pred_mask = pred_energy > 0.1 * th.mean(target_energy)
+        target_mask = target_energy > self.ignore_below * th.mean(target_energy)
+        pred_mask = pred_energy > self.ignore_below * th.mean(target_energy)
         indices = th.nonzero(target_mask * pred_mask).view(-1)
         data, target = th.index_select(data, 0, indices), th.index_select(target, 0, indices)
         # compute actual phase loss in angular space

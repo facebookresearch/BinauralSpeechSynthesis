@@ -7,18 +7,29 @@ LICENSE file in the root directory of this source tree.
 """
 
 import os
+import argparse
 
 from src.dataset import BinauralDataset
 from src.models import BinauralNetwork
 from src.trainer import Trainer
 
-dataset_dir = "/mnt/home/richardalex/tmp/bobatea/data/trainset"
-artifacts_dir = "/mnt/home/richardalex/tmp/artifacts"
-
-os.makedirs(artifacts_dir, exist_ok=True)
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset_directory",
+                    type=str,
+                    default="./data/trainset",
+                    help="path to the training data")
+parser.add_argument("--artifacts_directory",
+                    type=str,
+                    default="./outputs",
+                    help="directory to write model files to")
+parser.add_argument("--num_gpus",
+                    type=int,
+                    default=4,
+                    help="number of GPUs used during training")
+args = parser.parse_args()
 
 config = {
-    "artifacts_dir": artifacts_dir,
+    "artifacts_dir": args.artifacts_directory,
     "learning_rate": 0.001,
     "newbob_decay": 0.5,
     "newbob_max_decay": 0.01,
@@ -27,10 +38,12 @@ config = {
     "loss_weights": {"l2": 1.0, "phase": 0.01},
     "save_frequency": 10,
     "epochs": 100,
-    "num_gpus": 4,
+    "num_gpus": args.num_gpus,
 }
 
-dataset = BinauralDataset(dataset_directory=dataset_dir, chunk_size_ms=200, overlap=0.5)
+os.makedirs(config["artifacts_dir"], exist_ok=True)
+
+dataset = BinauralDataset(dataset_directory=args.dataset_directory, chunk_size_ms=200, overlap=0.5)
 
 net = BinauralNetwork(view_dim=7,
                       warpnet_layers=4,

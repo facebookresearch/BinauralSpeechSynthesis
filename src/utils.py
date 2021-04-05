@@ -36,30 +36,32 @@ class Net(th.nn.Module):
         if self.use_cuda:
             self.cuda()
 
-    '''
-    load network parameters from model_dir/model_name.suffix.net
-    model_dir: (str) directory where the model should be stored
-    suffix: (str) optional suffix to append to the network name
-    '''
+    def load_from_file(self, model_file):
+        '''
+        load network parameters from model_file
+        :param model_file: file containing the model parameters
+        '''
+        if self.use_cuda:
+            self.cpu()
+
+        states = th.load(model_file)
+        self.load_state_dict(states)
+
+        if self.use_cuda:
+            self.cuda()
+        print(f"Loaded: {model_file}")
+
     def load(self, model_dir, suffix=''):
         '''
         load network parameters from model_dir/model_name.suffix.net
         :param model_dir: directory to load the model from
         :param suffix: suffix to append after model name
         '''
-        if self.use_cuda:
-            self.cpu()
-
         if suffix == "":
             fname = f"{model_dir}/{self.model_name}.net"
         else:
             fname = f"{model_dir}/{self.model_name}.{suffix}.net"
-
-        states = th.load(fname)
-        self.load_state_dict(states)
-        if self.use_cuda:
-            self.cuda()
-        print("Loaded:", fname)
+        self.load_from_file(fname)
 
     def num_trainable_parameters(self):
         '''
