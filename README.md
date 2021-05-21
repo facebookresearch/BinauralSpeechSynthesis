@@ -22,7 +22,7 @@ The audio files are 48kHz recordings and the position files have tracked receive
 
 The position files have one tracked sample per row. So, 120 rows represent 1 second of tracked positions. Positions are represented as `(x,y,z)` coordinates and head orientations are represented as quaternions `(qx, qy, qz, qw)`. Each row therefore contains seven float values `(x,y,z,qx,qy,qz,qw)`.
 
-Note that in our setup the receiver was a mannequin that did not move. Receiver positions are therefore the same at all times. The tranmitter is the in the origin of the coordinate system and, from the receiver's perspective, `x` points forward, `y` points right, and `z` points up.
+Note that in our setup the receiver was a mannequin that did not move. Receiver positions are therefore the same at all times. The receiver is the in the origin of the coordinate system and, from the receiver's perspective, `x` points forward, `y` points right, and `z` points up.
 
 ## Code
 
@@ -44,11 +44,11 @@ The full network has [3 WaveNet blocks](https://github.com/facebookresearch/Bina
 ### Evaluation
 
 The evaluation can be started by running the `evaluate.py` script. Make sure to pass the correct command line arguments:
-* `--dataset_directory`: the path to the directory containing the test data, i.e. `/your/downloaded/dataset/path/testset`\
-* `--model_file`" the path to the model you want to evaluate, will usually be located in the `artifacts_dir` used in the training script.
+* `--dataset_directory`: the path to the directory containing the test data, i.e. `/your/downloaded/dataset/path/testset`
+* `--model_file`: the path to the model you want to evaluate, will usually be located in the `artifacts_dir` used in the training script.
 * `--artifacts_directory`: the generated binaural audio of each test sequence will be saved to this directory.
 
 ## License
 
-The code and dataset are release under [CC-NC 4.0 International license](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/LICENSE).
+The code and dataset are released under [CC-NC 4.0 International license](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/LICENSE).
 
