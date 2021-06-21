@@ -12,6 +12,8 @@ If you use this code or the provided dataset, please cite our paper "Neural Synt
 }
 ```
 
+For a qualitative comparison to our work, check out our supplemental video [here](https://research.fb.com/publications/neural-synthesis-of-binaural-speech-from-mono-audio/).
+
 ## Dataset
 
 Download the [dataset](https://github.com/facebookresearch/BinauralSpeechSynthesis/releases/tag/v1.0) and unzip it.
@@ -29,8 +31,8 @@ Note that in our setup the receiver was a mannequin that did not move. Receiver 
 ### Third-Party Dependencies
 * numpy
 * scipy
-* torch
-* torchaudio
+* torch (v1.7.0)
+* torchaudio (v0.7.0)
 
 ### Training
 
@@ -38,8 +40,7 @@ The training can be started by running the `train.py` script. Make sure to pass 
 * `--dataset_directory`: the path to the directory containing the training data, i.e. `/your/downloaded/dataset/path/trainset`
 * `--artifacts_directory`: the path to write log files to and to save models and checkpoints
 * `--num_gpus`: the number of GPUs to be used; we used four for the experiments in the paper. If you train on less GPUs or on GPUs with low memory, you might need to reduce the [batch size](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/train.py#L36) in `train.py`.
-
-The full network has [3 WaveNet blocks](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/train.py#L51). For training and inference, we recommend to reduce this to one block, which will come at the cost of slightly worse results.
+* `--blocks`: the number of wavenet blocks of the network. Use 3 for the network from the paper or 1 for a lightweight, faster model with slightly worse results.
 
 ### Evaluation
 
@@ -47,6 +48,29 @@ The evaluation can be started by running the `evaluate.py` script. Make sure to 
 * `--dataset_directory`: the path to the directory containing the test data, i.e. `/your/downloaded/dataset/path/testset`
 * `--model_file`: the path to the model you want to evaluate, will usually be located in the `artifacts_dir` used in the training script.
 * `--artifacts_directory`: the generated binaural audio of each test sequence will be saved to this directory.
+* `--blocks`: the number of wavenet blocks of the network.
+
+We provide silent videos for each of the test sequences [here](https://github.com/facebookresearch/BinauralSpeechSynthesis/releases/tag/video_v1.0) for you to visualize your results. To generate a top-view video for your generated audio similar to the videos shown in our supplemental material, you might use `ffmpeg`:
+```
+ ffmpeg -i <silent_video.mp4> -i <binaural_audio.wav> -c:v copy -c:a aac output.mp4
+```
+
+## Pretrained Models
+
+We provide two pretrained models [here](https://github.com/facebookresearch/BinauralSpeechSynthesis/releases/tag/v1.1).
+
+The small model with just one wavenet block will give these results with the evaluation script:
+```
+l2 (x10^3):     0.197
+amplitude:      0.043
+phase:          0.862
+```
+The large model with three wavenet blocks will give these results with the evaluation script:
+```
+l2 (x10^3):     0.144
+amplitude:      0.036
+phase:          0.804
+```
 
 ## License
 
