@@ -26,6 +26,9 @@ parser.add_argument("--num_gpus",
                     type=int,
                     default=4,
                     help="number of GPUs used during training")
+parser.add_argument("--blocks",
+                    type=int,
+                    default=3)
 args = parser.parse_args()
 
 config = {
@@ -48,7 +51,7 @@ dataset = BinauralDataset(dataset_directory=args.dataset_directory, chunk_size_m
 net = BinauralNetwork(view_dim=7,
                       warpnet_layers=4,
                       warpnet_channels=64,
-                      wavenet_blocks=3,
+                      wavenet_blocks=args.blocks,
                       layers_per_block=10,
                       wavenet_channels=64
                       )

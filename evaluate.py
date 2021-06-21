@@ -29,6 +29,9 @@ parser.add_argument("--artifacts_directory",
                     type=str,
                     default="./outputs",
                     help="directory to write binaural outputs to")
+parser.add_argument("--blocks",
+                    type=int,
+                    default=3)
 args = parser.parse_args()
 
 
@@ -97,7 +100,7 @@ test_sequences = [f"subject{i+1}" for i in range(8)] + ["validation_sequence"]
 net = BinauralNetwork(view_dim=7,
                       warpnet_layers=4,
                       warpnet_channels=64,
-                      wavenet_blocks=3,
+                      wavenet_blocks=args.blocks,
                       layers_per_block=10,
                       wavenet_channels=64
                       )
