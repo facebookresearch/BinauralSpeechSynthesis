@@ -39,7 +39,7 @@ Note that in our setup the receiver was a mannequin that did not move. Receiver 
 The training can be started by running the `train.py` script. Make sure to pass to correct command line arguments:
 * `--dataset_directory`: the path to the directory containing the training data, i.e. `/your/downloaded/dataset/path/trainset`
 * `--artifacts_directory`: the path to write log files to and to save models and checkpoints
-* `--num_gpus`: the number of GPUs to be used; we used four for the experiments in the paper. If you train on less GPUs or on GPUs with low memory, you might need to reduce the [batch size](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/train.py#L36) in `train.py`.
+* `--num_gpus`: the number of GPUs to be used; we used four for the experiments in the paper. If you train on less GPUs or on GPUs with low memory, you might need to reduce the [batch size](https://github.com/facebookresearch/BinauralSpeechSynthesis/blob/main/train.py#L39) in `train.py`.
 * `--blocks`: the number of wavenet blocks of the network. Use 3 for the network from the paper or 1 for a lightweight, faster model with slightly worse results.
 
 ### Evaluation
