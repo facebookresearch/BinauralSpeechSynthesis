@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 
+import tqdm
 import torchaudio as ta
 import numpy as np
 
@@ -25,7 +26,9 @@ class BinauralDataset:
         super().__init__()
         # load audio data and relative transmitter/receiver position/orientation
         self.mono, self.binaural, self.view = [], [], []
-        for subject_id in range(8):
+        pbar = tqdm.tqdm(range(8))
+        for subject_id in pbar:
+            pbar.set_description(f"loading data: subject {subject_id + 1}")
             mono, _ = ta.load(f"{dataset_directory}/subject{subject_id + 1}/mono.wav")
             binaural, _ = ta.load(f"{dataset_directory}/subject{subject_id + 1}/binaural.wav")
             # receiver is fixed at origin in this dataset, so we only need transmitter view

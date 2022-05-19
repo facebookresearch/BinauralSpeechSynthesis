@@ -29,6 +29,7 @@ Note that in our setup the receiver was a mannequin that did not move. Receiver 
 ## Code
 
 ### Third-Party Dependencies
+* tqdm
 * numpy
 * scipy
 * torch (v1.7.0)

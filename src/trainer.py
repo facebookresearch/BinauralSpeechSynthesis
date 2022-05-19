@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 
+import tqdm
 import time
 import torch as th
 from torch.utils.data import DataLoader
@@ -46,11 +47,13 @@ class Trainer:
         for epoch in range(self.config["epochs"]):
             t_start = time.time()
             loss_stats = {}
-            for data in self.dataloader:
+            data_pbar = tqdm.tqdm(self.dataloader)
+            for data in data_pbar:
                 loss_new = self.train_iteration(data)
                 # logging
                 for k, v in loss_new.items():
                     loss_stats[k] = loss_stats[k]+v if k in loss_stats else v
+                data_pbar.set_description(f"loss: {loss_new['accumulated_loss'].item():.7f}")
             for k in loss_stats:
                 loss_stats[k] /= len(self.dataloader)
             self.optimizer.update_lr(loss_stats["accumulated_loss"])
